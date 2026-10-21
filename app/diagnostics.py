@@ -44,11 +44,19 @@ def get_recent_logs(scenario: str) -> dict:
 
 
 def check_response_time(scenario: str) -> dict:
-    """Return simulated response time."""
     if scenario not in SCENARIOS:
         return {"error": "Unknown scenario"}
 
-    _, latency, _ = SCENARIOS[scenario]
+    healthy, latency, _ = SCENARIOS[scenario]
+
+    if scenario == "database_down":
+        return {
+            "scenario": scenario,
+            "response_time_ms": None,
+            "threshold_ms": 1000,
+            "within_threshold": None,
+            "message": "Response time unavailable because the database is down.",
+        }
 
     return {
         "scenario": scenario,

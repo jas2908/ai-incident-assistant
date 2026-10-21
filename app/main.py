@@ -54,3 +54,9 @@ def get_status(scenario: Scenario):
         response_time_ms=latency,
         message=message,
     )
+
+@app.get("/investigate/{scenario}")
+def investigate(scenario: Scenario):
+    from app.agent import investigate_incident
+
+    return investigate_incident(scenario)
