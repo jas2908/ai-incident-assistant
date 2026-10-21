@@ -60,3 +60,9 @@ def investigate(scenario: Scenario):
     from app.agent import investigate_incident
 
     return investigate_incident(scenario)
+
+@app.get("/report/{scenario}")
+def get_incident_report(scenario: Scenario):
+    from app.reports import build_incident_report
+
+    return build_incident_report(scenario)
