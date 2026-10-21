@@ -1,43 +1,130 @@
+# AI Incident Assistant
 
-# AI IT Incident Assistant
+A small backend project that uses a local language model to investigate simulated IT incidents.
 
-A small portfolio project exploring AI agent workflows,
-diagnostic tools, and IT incident investigation.
+I built this project to explore how AI agents can use tools to gather information instead of relying only on what a model already knows. The idea is simple: when something goes wrong with a service, the assistant checks the available diagnostic information and uses it to help explain what might be happening.
 
-## Current features
+The project is built with Python, FastAPI, Ollama, and Llama 3.1.
 
-- FastAPI application
-- Health endpoint
-- Simulated IT incident scenarios
-- Automated tests
+## How it works
 
-## Planned features
+The application currently supports three simulated scenarios:
 
-- Read-only diagnostic tools
-- Ollama AI agent with tool calling
-- Evidence-based incident reports
-- Evaluation tests
-- Docker and CI/CD
+- `healthy` – the service is running normally
+- `database_down` – the application cannot connect to its database
+- `high_latency` – the service is responding more slowly than expected
 
-## Run locally
+When an investigation starts, the AI agent can call three diagnostic functions:
 
-Install dependencies:
+- `check_service_health` – checks the simulated service status
+- `get_recent_logs` – retrieves simulated application logs
+- `check_response_time` – checks response time against a threshold
 
-    pip install -r requirements.txt
+The agent receives the results of these checks and uses them to generate an investigation summary.
 
-Start the API:
+I also added a separate report builder that produces a consistent JSON report with the available evidence, a likely cause, and suggested next steps. This makes the output easier to use from other applications, even when the AI-generated explanation varies.
 
-    python -m uvicorn app.main:app --reload
+## Tech stack
 
-Open:
+- **Python** – application logic and diagnostic functions
+- **FastAPI** – REST API and interactive documentation
+- **Ollama + Llama 3.1 (8B)** – local AI model with tool calling
+- **Pydantic** – API data validation
+- **pytest** – automated tests
+- **Git** – version control
 
-    http://127.0.0.1:8000/docs
+## Getting started
 
-## Tests
+I developed and tested the project using Ubuntu on WSL, but it should also work in other environments where Python and Ollama are available.
 
-    python -m pytest -q
+You'll need Python 3.11 or newer and a working Ollama installation.
 
-## Note
+### 1. Clone the project
 
-All incident scenarios are simulated.
-This project does not monitor or modify real infrastructure.
+```bash
+git clone https://github.com/YOUR_USERNAME/ai-incident-assistant.git
+cd ai-incident-assistant
+```
+
+### 2. Create a virtual environment
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+On Windows PowerShell, activate it with:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Set up the AI model
+
+Download Llama 3.1 through Ollama:
+
+```bash
+ollama pull llama3.1:8b
+```
+
+Make sure Ollama is running. If it isn't already running as a service, start it with:
+
+```bash
+ollama serve
+```
+
+### 5. Start the API
+
+```bash
+python -m uvicorn app.main:app --reload
+```
+
+The API documentation is available at:
+
+http://localhost:8000/docs
+
+You can try the endpoints directly from Swagger UI.
+
+## API endpoints
+
+| Endpoint | What it does |
+|---|---|
+| `GET /health` | Checks whether the API is running |
+| `GET /status/{scenario}` | Returns the simulated service status |
+| `GET /investigate/{scenario}` | Runs an AI investigation using diagnostic tools |
+| `GET /report/{scenario}` | Generates a structured incident report |
+| `GET /analyze/{scenario}` | Runs the AI investigation and returns a structured report |
+
+For example, to investigate a slow service:
+
+```bash
+curl http://localhost:8000/analyze/high_latency
+```
+
+Or to get just the structured report:
+
+```bash
+curl http://localhost:8000/report/high_latency
+```
+
+In the high-latency scenario, the simulated response time is 2,500 ms, compared with a threshold of 1,000 ms. The report includes that measurement and suggests areas to investigate further.
+
+## Testing
+
+The project includes tests for the API, diagnostic functions, report generation, and agent behavior.
+
+Run them with:
+
+```bash
+python -m pytest -q
+```
+
+For the agent tests, I use mocked Ollama responses. This lets me test how the application handles tool calls without needing to run the language model for every test.
+
+

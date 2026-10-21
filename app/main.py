@@ -66,3 +66,18 @@ def get_incident_report(scenario: Scenario):
     from app.reports import build_incident_report
 
     return build_incident_report(scenario)
+
+@app.get("/analyze/{scenario}")
+def analyze_incident(scenario: Scenario):
+    from app.agent import investigate_incident
+    from app.reports import build_incident_report
+
+    investigation = investigate_incident(scenario)
+    structured_report = build_incident_report(scenario)
+
+    return {
+        "scenario": scenario,
+        "ai_investigation": investigation["report"],
+        "tools_used": investigation["tools_used"],
+        "structured_report": structured_report,
+    }
