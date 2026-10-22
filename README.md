@@ -42,7 +42,7 @@ You'll need Python 3.11 or newer and a working Ollama installation.
 ### 1. Clone the project
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/ai-incident-assistant.git
+git clone https://github.com/jas2908/ai-incident-assistant.git
 cd ai-incident-assistant
 ```
 
